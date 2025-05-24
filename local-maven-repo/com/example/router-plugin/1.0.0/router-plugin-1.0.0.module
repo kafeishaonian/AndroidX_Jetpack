@@ -1,0 +1,103 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.example",
+    "module": "router-plugin",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.10.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "router-plugin-1.0.0.jar",
+          "url": "router-plugin-1.0.0.jar",
+          "size": 31253,
+          "sha512": "2cbd9bc3644a8c7963a537f3442b527d877fc34f93ff16529423bee183ac06ab764c38cc4680ee747a7b0771220436e0b0259ad96bc5f0bde6609e58f5832eb4",
+          "sha256": "f168f3601608ac7fb95f9eae745809d64fee3dd759a2132a52d5b3d9fe128990",
+          "sha1": "82654ef33310e1fbc6382c13d3a2f0299eb8a9b9",
+          "md5": "f46c854153123bc0224c6793263ce7f9"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.ow2.asm",
+          "module": "asm",
+          "version": {
+            "requires": "9.7"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-commons",
+          "version": {
+            "requires": "9.7"
+          }
+        },
+        {
+          "group": "org.ow2.asm",
+          "module": "asm-util",
+          "version": {
+            "requires": "9.7"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.1.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "router-plugin-1.0.0.jar",
+          "url": "router-plugin-1.0.0.jar",
+          "size": 31253,
+          "sha512": "2cbd9bc3644a8c7963a537f3442b527d877fc34f93ff16529423bee183ac06ab764c38cc4680ee747a7b0771220436e0b0259ad96bc5f0bde6609e58f5832eb4",
+          "sha256": "f168f3601608ac7fb95f9eae745809d64fee3dd759a2132a52d5b3d9fe128990",
+          "sha1": "82654ef33310e1fbc6382c13d3a2f0299eb8a9b9",
+          "md5": "f46c854153123bc0224c6793263ce7f9"
+        }
+      ]
+    }
+  ]
+}

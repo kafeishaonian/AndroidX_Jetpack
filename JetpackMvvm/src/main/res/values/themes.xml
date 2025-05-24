@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.AndroidX_Jetpack" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.AndroidX_Jetpack" parent="Base.Theme.AndroidX_Jetpack" />
+
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar"/>
+</resources>

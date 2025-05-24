@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.example.router-plugin</groupId>
+  <artifactId>com.example.router-plugin.gradle.plugin</artifactId>
+  <versioning>
+    <latest>unspecified</latest>
+    <release>unspecified</release>
+    <versions>
+      <version>unspecified</version>
+    </versions>
+    <lastUpdated>20250524021849</lastUpdated>
+  </versioning>
+</metadata>
