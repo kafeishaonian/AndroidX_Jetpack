@@ -9,8 +9,7 @@ fun <T : Any> AppAsmContext.getBean(definition: BeanDefinition<T>): T =
 fun <T : Any> AppAsmContext.getBean(clazz: Class<T>): T {
     val typeBeanDefinition = beanDefinitionTypeMap[clazz]?.takeIf { definition ->
         clazz.isAssignableFrom(definition::class.java) &&
-                definition is TypeBeanDefinition<*> &&
-                (definition as TypeBeanDefinition<*>).targetClass == clazz
+                definition is TypeBeanDefinition<*>
     } as? TypeBeanDefinition<T>
 
     return typeBeanDefinition?.let {
