@@ -1,8 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-//    id("kotlin-kapt")
-    id("com.example.router-plugin") version "1.0.0"
+    id("com.example.router-plugin")
 }
 
 afterEvaluate {
@@ -43,15 +42,15 @@ android {
         jvmTarget = "11"
     }
 
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+//    packagingOptions {
+//        resources {
+//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+//        }
+//    }
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+//    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -61,9 +60,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.asm.asm)
-//    implementation(project(":JetpackMvvm"))
-//    implementation(project(":Thread-P2P-Module"))
+//    implementation(libs.asm.asm)
+    implementation(project(":JetpackMvvm"))
+    implementation(project(":Thread-P2P-Module"))
     implementation(project(":Router-Module"))
 //    kapt(project(":router-plugin"))
 }

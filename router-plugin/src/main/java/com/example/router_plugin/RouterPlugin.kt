@@ -11,6 +11,10 @@ class RouterPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val androidComponents =
             target.extensions.getByType(AndroidComponentsExtension::class.java)
+
+        androidComponents.beforeVariants { variant ->
+            variant.enable = true
+        }
         androidComponents.onVariants { variant ->
             val capitalizedVariantName = variant.name.replaceFirstChar { it.uppercase() }
 

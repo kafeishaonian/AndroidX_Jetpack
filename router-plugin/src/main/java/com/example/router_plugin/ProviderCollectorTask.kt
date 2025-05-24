@@ -10,22 +10,38 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
-import org.gradle.internal.impldep.bsh.commands.dir
-import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
+import org.objectweb.asm.AnnotationVisitor
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
+import java.io.BufferedOutputStream
+import java.io.File
 import java.io.FileOutputStream
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 
+internal const val ROUTER_INJECT = "com/example/router/AppAsmContext.class"
+
+private val blackList = arrayOf(
+    "androidx/",
+    "android/",
+    "kotlin/",
+    "kotlinx/",
+    "com/google/",
+    "org/"
+)
+
 internal abstract class ProviderCollectorTask : DefaultTask() {
 
-//    @get:Incremental
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val allJars: ListProperty<RegularFile>
 
-//    @get:Incremental
+    //    @get:Incremental
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val allDirectories: ListProperty<Directory>
@@ -34,79 +50,134 @@ internal abstract class ProviderCollectorTask : DefaultTask() {
     abstract val output: RegularFileProperty
 
     @TaskAction
-    fun taskAction(inputChanges: InputChanges) {
-        val addOperateList = mutableListOf<String>()
+    fun taskAction() {
+        val addOperateList = CopyOnWriteArrayList<ProviderInfo>()
 
-        var needOparate: ByteArray? = null
+        var targetOperate: File? = null
 
-        println("---开始执行代码---->")
-        val outputFile = output.get().asFile
-        println("输出文件路径: ${outputFile.absolutePath}")
+        val jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
 
-        val fileOutputStream = FileOutputStream(outputFile)
-        println("FileOutputStream 已打开: ${outputFile.absolutePath}")
-        JarOutputStream(fileOutputStream).use { jarOut ->
-            println("---进入 use 块--11-")
-            processTargetJars(jarOut, addOperateList) {
-                needOparate = it
-            }
-            println("---进入 use 块--22-")
-            processDirs(jarOut, addOperateList)
-            println("---进入 use 块--33-")
+        allDirectories.get().onEach { directory ->
+            val directoryUri = directory.asFile.toURI()
+            directory.asFile
+                .walk()
+                .filter { it.isFile }
+                .forEach { file ->
+                    val filePath = directoryUri
+                        .relativize(file.toURI())
+                        .path
+                        .replace(File.separatorChar, '/')
+
+                    if (filePath == ROUTER_INJECT) {
+                        targetOperate = file
+                        return@forEach
+                    }
+
+                    jarOutput.putNextEntry(JarEntry(filePath))
+                    file.inputStream().use {
+                        it.copyTo(jarOutput)
+                    }
+                    jarOutput.closeEntry()
+
+                    if (file.name.endsWith(".class")) {
+                        val className = file.name.removeSuffix(".class")
+                        if (!className.isModuleClass()) {
+                            return@forEach
+                        }
+                        file.inputStream().use {
+                            val classReader = ClassReader(it)
+                            classReader.accept(
+                                acceptProviderClassCollector(addOperateList),
+                                ClassReader.SKIP_DEBUG
+                            )
+                        }
+                    }
+                }
         }
+        allJars.get().onEach { file ->
+            val jarFile = JarFile(file.asFile)
+            jarFile.entries().iterator().forEach { jarEntry ->
+                try {
+                    if (jarEntry.name == ROUTER_INJECT) {
+                        targetOperate = file.asFile
+                        return@forEach
+                    }
+
+                    jarOutput.putNextEntry(JarEntry(jarEntry.name))
+                    jarFile.getInputStream(jarEntry).use {
+                        it.copyTo(jarOutput)
+                    }
+
+                    val have = blackList.any {
+                        jarEntry.name.startsWith(it)
+                    }
+
+                    if (!have && jarEntry.name.endsWith(".class")) {
+                        val className = jarEntry.name.removeSuffix(".class")
+                        if (!className.isModuleClass()) {
+                            return@forEach
+                        }
+                        jarFile.getInputStream(jarEntry).use {
+                            val classReader = ClassReader(it)
+                            classReader.accept(
+                                acceptProviderClassCollector(addOperateList),
+                                ClassReader.SKIP_DEBUG
+                            )
+                        }
+                    }
+                } catch (_: Exception) {
+                } finally {
+                    jarOutput.closeEntry()
+                }
+            }
+            jarFile.close()
+        }
+        if (targetOperate == null) {
+            throw RuntimeException("not found $ROUTER_INJECT")
+        }
+
+        val jarFile = JarFile(targetOperate)
+        jarOutput.putNextEntry(JarEntry(ROUTER_INJECT))
+        jarFile.getInputStream(jarFile.getJarEntry(ROUTER_INJECT)).use {
+            val writer = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+            val appAsmVisitor = AppAsmContextModifier(writer, parseProviders(addOperateList))
+            ClassReader(it).accept(appAsmVisitor, ClassReader.SKIP_DEBUG)
+            jarOutput.write(writer.toByteArray())
+            jarOutput.closeEntry()
+        }
+        jarFile.close()
+        jarOutput.close()
     }
 
-    private fun processDirs(jarOutPut: JarOutputStream,  addOperateList: MutableList<String>) {
-        allDirectories.get().onEach { dir ->
-            dir.asFile.walk().forEach { file ->
-                if (file.isFile) {
-                    println("jar file:= ${file.name}")
+
+    private fun acceptProviderClassCollector(addOperateList: CopyOnWriteArrayList<ProviderInfo>): ClassVisitor {
+        val writer = ClassWriter(ClassWriter.COMPUTE_FRAMES)
+        return object : ProviderClassCollector(writer) {
+            override fun methodExit(
+                className: String?,
+                interfaces: Array<String>
+            ) {
+                className?.let { implName ->
+                    val interfaceName = interfaces.first()
+                    addOperateList.add(ProviderInfo(interfaceName, implName, 0))
                 }
             }
         }
     }
 
-    private fun processTargetJars(
-        jarOutPut: JarOutputStream,
-        addOperateList: MutableList<String>,
-        needOperateByteArrayList: (it: ByteArray) -> Unit
-    ) {
-        allJars.get().forEach { file -> {
-            println("---22222----> ${file.asFile.absolutePath}")
-            JarFile(file.asFile).use { jarFile->
-                println("---33333----> ${jarFile.name}")
-                jarFile.entries().iterator().forEach { jarEntry ->
-                    println("---44444----> ${jarEntry.name}")
-//                    if (!jarEntry.isDirectory && jarEntry.name.contains("com.example.router.AppAsmContext")) {
-//                        println("------> name:= ${jarEntry.name}")
-//                        jarFile.getInputStream(jarEntry).use {
-//                            needOperateByteArrayList.invoke(it.readAllBytes())
-//                        }
-//                    } else {
-//                        runCatching {
-//                            println("=======> name:= ${jarEntry.name}")
-//
-//                            if (isTargetProxyClass(jarEntry.name ?: "")) {
-//                                addOperateList.add(jarEntry.name)
-//                            }
-//
-//                            jarOutPut.putNextEntry(JarEntry(jarEntry.name))
-//
-//                            jarFile.getInputStream(jarEntry).use {
-//                                it.copyTo(jarOutPut)
-//                            }
-//                        }
-//                        jarOutPut.closeEntry()
-//                    }
-                }
-            }
-        } }
+
+    private fun String.isModuleClass(): Boolean {
+        return this.endsWith("Impl")
     }
 
-    private fun isTargetProxyClass(filePath: String): Boolean {
-        if (filePath.startsWith("com.example.router") && filePath.endsWith("RouterProvider")) {
-            return true
-        }
-        return false
+    private fun parseProviders(providerInfos: CopyOnWriteArrayList<ProviderInfo>): List<ProviderInfo> {
+        return providerInfos
+            .sortedBy {
+                it.implType
+            }.mapIndexed { index, info ->
+                info.copy(beanId = index + 1)
+            }
     }
+
+
 }
