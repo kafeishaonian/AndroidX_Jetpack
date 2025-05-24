@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.aj.nativelib.IP2pSource
+import com.example.router.AppAsm
 //import com.aj.mvvm.demo.compiler.CompilerActivity
 //import com.aj.nativelib.PublicIPFetcher
 //import com.aj.nativelib.ThreadDemo
@@ -33,6 +35,9 @@ class MainActivity : AppCompatActivity() {
 //            ThreadDemo.sendData(ip, data = "hello from main")
 //        }
         startActivity(Intent(this, RouterDemoActivity::class.java))
+
+        val p2p = AppAsm.getRouter(IP2pSource::class.java).getPublicIP()
+        Log.e("LogLogLog", "-----> p2p:= $p2p")
     }
 
 

@@ -2,7 +2,7 @@ package com.example.router
 
 class AppAsmContext {
 
-    val beanDefinition = mutableListOf<BeanDefinition<*>>()
+    val beanDefinitionList = mutableListOf<BeanDefinition<*>>()
     val beanDefinitionTypeMap = mutableMapOf<Class<*>, TypeBeanDefinition<*>>()
 
     init {
@@ -16,7 +16,7 @@ class AppAsmContext {
 
 
     private fun fillBeanDefinitionMap() {
-        for (definition in beanDefinition) {
+        for (definition in beanDefinitionList) {
             if (definition is TypeBeanDefinition<*>) {
                 beanDefinitionTypeMap[definition.targetClass] = definition
             }

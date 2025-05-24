@@ -41,17 +41,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
-//    packagingOptions {
-//        resources {
-//            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-//        }
-//    }
 }
 
 dependencies {
-//    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -60,9 +52,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-//    implementation(libs.asm.asm)
     implementation(project(":JetpackMvvm"))
     implementation(project(":Thread-P2P-Module"))
     implementation(project(":Router-Module"))
-//    kapt(project(":router-plugin"))
 }

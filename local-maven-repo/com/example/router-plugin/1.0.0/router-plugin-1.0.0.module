@@ -38,11 +38,11 @@
         {
           "name": "router-plugin-1.0.0.jar",
           "url": "router-plugin-1.0.0.jar",
-          "size": 26276,
-          "sha512": "89730030f4ff54bb7ea91d5d9981771ff767b5dcf93b7cf8d143a2499f5b7b7f1d53932ddac65d76e49e175fd649e72e887857fcf893f6128e5823898eed1e01",
-          "sha256": "7a992bf86721ca18c545f28ece52b4b0bf7f181dd8736266f7eed89f33fb454e",
-          "sha1": "b9ce580b851c756e13e120a1c9826fdea5a5c695",
-          "md5": "842fd57f21b868d4caf81dac06214ebc"
+          "size": 26279,
+          "sha512": "cfa3dcf55f2b00d1bf859b5e2a52f9f24ebcc0c014c3b2e95da35aca422be0b8dcb16645e73b9eaf5d045a1cfc333122fed8cc2f0ffaaef717bcd3cf4b408156",
+          "sha256": "913265c643831e75101ea5aa674e06f75bf181892e234b1635a898a7b9cffc30",
+          "sha1": "031bc10a7899a618dbb8345e31fc7ef346cfab80",
+          "md5": "47aa4782a9fe45080bcd5edd53c9919c"
         }
       ]
     },
@@ -91,11 +91,11 @@
         {
           "name": "router-plugin-1.0.0.jar",
           "url": "router-plugin-1.0.0.jar",
-          "size": 26276,
-          "sha512": "89730030f4ff54bb7ea91d5d9981771ff767b5dcf93b7cf8d143a2499f5b7b7f1d53932ddac65d76e49e175fd649e72e887857fcf893f6128e5823898eed1e01",
-          "sha256": "7a992bf86721ca18c545f28ece52b4b0bf7f181dd8736266f7eed89f33fb454e",
-          "sha1": "b9ce580b851c756e13e120a1c9826fdea5a5c695",
-          "md5": "842fd57f21b868d4caf81dac06214ebc"
+          "size": 26279,
+          "sha512": "cfa3dcf55f2b00d1bf859b5e2a52f9f24ebcc0c014c3b2e95da35aca422be0b8dcb16645e73b9eaf5d045a1cfc333122fed8cc2f0ffaaef717bcd3cf4b408156",
+          "sha256": "913265c643831e75101ea5aa674e06f75bf181892e234b1635a898a7b9cffc30",
+          "sha1": "031bc10a7899a618dbb8345e31fc7ef346cfab80",
+          "md5": "47aa4782a9fe45080bcd5edd53c9919c"
         }
       ]
     }

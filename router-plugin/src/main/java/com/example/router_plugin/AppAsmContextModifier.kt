@@ -46,7 +46,7 @@ class AppAsmContextModifier(
         mv.visitFieldInsn(
             Opcodes.GETFIELD,
             "com/example/router/AppAsmContext",
-            "beanDefinition",
+            "beanDefinitionList",
             "Ljava/util/List;"
         )
 

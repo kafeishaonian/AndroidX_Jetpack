@@ -72,9 +72,6 @@ dependencies {
     //retrofit
     api(libs.retrofit)
     api(libs.converter.gson)
-//    api("com.github.franmontiel:PersistentCookieJar:v1.0.1")
-//    //动态替换BaseUrl库 使用可参考 https://github.com/JessYanCoding/RetrofitUrlManager
-//    api("me.jessyan:retrofit-url-manager:1.4.0")
 
     api(libs.compiler.compiler)
     api(libs.compiler.ui)
