@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("com.example.router-plugin")
+//    id("com.example.router-plugin")
 }
 
 afterEvaluate {
