@@ -73,6 +73,8 @@ dependencies {
     api(libs.retrofit)
     api(libs.converter.gson)
 
+    implementation(libs.activity.ktx)
+
     api(libs.compiler.compiler)
     api(libs.compiler.ui)
     api(libs.activity.compose)

@@ -8,6 +8,8 @@ import android.os.BaseBundle
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import java.io.Serializable
@@ -406,18 +408,21 @@ class GhostFragment: Fragment() {
         this.callback = callback
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        intent?.let { startActivityForResult(it, requestCode) }
+    private val resultLauncher: ActivityResultLauncher<Intent> = this.registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val code = result.resultCode
+        val data = result.data
+        val result = if (code == Activity.RESULT_OK && data != null) data else null
+        callback?.let {
+            it(result)
+        }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == this.requestCode) {
-            val result = if (resultCode == Activity.RESULT_OK && data != null) data else null
-            callback?.let {
-                it(result)
-            }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        intent?.let {
+            resultLauncher.launch(it)
         }
     }
 
