@@ -58,7 +58,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidX_Jetpack"
 include(":app")
-include(":JetpackMvvm")
-include(":Thread-P2P-Module")
+//include(":JetpackMvvm")
+//include(":Thread-P2P-Module")
 include(":Router-Module")
-include(":router-plugin")
+//include(":router-plugin")
+include(":File-Module")

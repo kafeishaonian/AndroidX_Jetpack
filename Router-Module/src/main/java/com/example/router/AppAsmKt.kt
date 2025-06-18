@@ -2,8 +2,18 @@ package com.example.router
 
 
 @Synchronized
-fun <T> AppAsmContext.getBean(definition: BeanDefinition<T>): T =
-    definition.sourceClass.getDeclaredConstructor().newInstance()
+fun <T> AppAsmContext.getBean(definition: BeanDefinition<T>): T {
+
+    val sourceClass = definition.sourceClass
+    var instance = beanDefinitionInstanceMap[sourceClass]
+
+    if (instance == null)  {
+        val newInstance = sourceClass.getDeclaredConstructor().newInstance()
+        beanDefinitionInstanceMap[sourceClass] = newInstance as Any
+        instance = newInstance
+    }
+    return instance as T
+}
 
 
 fun <T> AppAsmContext.getBean(clazz: Class<T>): T {

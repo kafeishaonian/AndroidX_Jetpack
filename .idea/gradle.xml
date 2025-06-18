@@ -10,11 +10,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/JetpackMvvm" />
+            <option value="$PROJECT_DIR$/File-Module" />
             <option value="$PROJECT_DIR$/Router-Module" />
-            <option value="$PROJECT_DIR$/Thread-P2P-Module" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/router-plugin" />
           </set>
         </option>
       </GradleProjectSettings>

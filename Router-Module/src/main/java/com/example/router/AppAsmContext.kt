@@ -4,6 +4,8 @@ class AppAsmContext {
 
     val beanDefinitionList = mutableListOf<BeanDefinition<*>>()
     val beanDefinitionTypeMap = mutableMapOf<Class<*>, TypeBeanDefinition<*>>()
+    val beanDefinitionInstanceMap = mutableMapOf<Class<*>, Any>()
+
 
     init {
         initBeanDefinition()
