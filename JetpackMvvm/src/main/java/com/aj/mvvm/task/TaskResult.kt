@@ -1,8 +1,5 @@
 package com.alaeatposapp.t2.task
 
-/**
- * 任务执行结果状态机
- */
 sealed class TaskResult {
     object Success: TaskResult()
     data class Retry<T>(val t: T?): TaskResult()
