@@ -39,13 +39,14 @@ class MainActivity : AppCompatActivity() {
         fileSystem.init(this)
 
 //        for (i in 0..20) {
-//            val save = fileSystem.saveUserProfile("30000$i", json)
+//            val save = fileSystem.saveUserProfile("40000$i", json)
 //        }
 
         CoroutineScope(Dispatchers.IO).launch {
             delay(10000)
             withContext(Dispatchers.Main) {
-                val files = fileSystem.loadPrefetchDirectory("01")
+//                val files = fileSystem.loadPrefetchDirectory("01", day = 0, flag = false)
+                val files = fileSystem.deleteUserProfile("400000")
                 Log.e("LogLogLog", "-----> files:= $files")
             }
         }

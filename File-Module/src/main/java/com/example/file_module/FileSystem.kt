@@ -55,12 +55,15 @@ class FileSystem {
         return readFile(businessId, "$userId.json")
     }
 
-    fun loadPrefetchDirectory(substr: String = "") : List<String>? {
-        return prefetchDirectory(businessId, substr = substr)
+    fun loadPrefetchDirectory(substr: String = "", day: Int = 0, flag: Boolean = true) : List<String>? {
+        return prefetchDirectory(businessId, substr = substr, day = day, flag = flag)
     }
 
     fun appendFile(userId: String?, json: String?): Boolean {
         return appendFile(businessId, "$userId.json", json)
     }
 
+    fun deleteUserProfile(userId: String?): Boolean {
+        return deleteFile(businessId, "$userId.json")
+    }
 }

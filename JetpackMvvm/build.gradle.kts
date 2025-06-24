@@ -83,6 +83,6 @@ dependencies {
     api(libs.ui.uitooling)
     api(libs.material.icons.extended)
 
-    implementation(project(":Thread-P2P-Module"))
+//    implementation(project(":Thread-P2P-Module"))
     implementation(project(":Router-Module"))
 }
