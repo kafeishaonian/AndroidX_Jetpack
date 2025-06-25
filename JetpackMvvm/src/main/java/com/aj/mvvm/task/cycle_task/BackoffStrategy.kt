@@ -1,4 +1,4 @@
-package com.alaeatposapp.t2.task
+package com.aj.mvvm.task.cycle_task
 
 /**
  * 退避策略接口

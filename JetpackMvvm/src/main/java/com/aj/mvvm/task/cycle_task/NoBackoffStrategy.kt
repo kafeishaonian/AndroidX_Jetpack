@@ -1,4 +1,4 @@
-package com.alaeatposapp.t2.task
+package com.aj.mvvm.task.cycle_task
 
 /**
  * 无退避策略
