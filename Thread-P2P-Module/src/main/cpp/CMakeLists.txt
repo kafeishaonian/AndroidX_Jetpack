@@ -35,6 +35,8 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         p2p/message_protocol.cpp
         p2p/p2p_manager.cpp
         utils/log_utils.h
+
+        im/im_client.cpp
         )
 
 # Specifies libraries CMake should link to your target library. You
