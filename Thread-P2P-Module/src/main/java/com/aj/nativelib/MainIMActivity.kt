@@ -23,7 +23,7 @@ class MainIMActivity: AppCompatActivity(), IMClient.Callback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
 
         imClient = IMClient()
         imClient?.init()
@@ -35,19 +35,21 @@ class MainIMActivity: AppCompatActivity(), IMClient.Callback {
 
 
         // 发送消息按钮
-        findViewById<View>(R.id.btn_send).setOnClickListener { v: View? ->
-            val receiverEdit = findViewById<EditText>(R.id.et_receiver)
-            val messageEdit = findViewById<EditText>(R.id.et_message)
+//        findViewById<View>(R.id.btn_send).setOnClickListener { v: View? ->
+//            val receiverEdit = findViewById<EditText>(R.id.et_receiver)
+//            val messageEdit = findViewById<EditText>(R.id.et_message)
 
 
             // 构建JSON消息
             val message = ChatMessage()
             message.sender = currentUserId
-            message.receiver = receiverEdit.text.toString()
-            message.content = messageEdit.text.toString()
+//            message.receiver = receiverEdit.text.toString()
+            message.receiver = ""
+//            message.content = messageEdit.text.toString()
+            message.content = ""
             message.timestamp = System.currentTimeMillis()
             imClient?.sendRawMessage(message.toJson())
-        }
+//        }
     }
 
     override fun onStateChanged(state: Int) {
@@ -130,11 +132,12 @@ class MainIMActivity: AppCompatActivity(), IMClient.Callback {
     }
 
     private fun updateStatus(status: String) {
-        (findViewById<View>(R.id.tv_status) as TextView).text = status
+//        (findViewById<View>(R.id.tv_status) as TextView).text = status
     }
 
     private fun addMessage(message: String) {
-        val messageView = findViewById<TextView>(R.id.tv_messages)
+//        val messageView = findViewById<TextView>(R.id.tv_messages)
+        val messageView = TextView(this)
         messageView.append(
             """
             
