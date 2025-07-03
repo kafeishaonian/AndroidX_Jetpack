@@ -34,6 +34,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         FileMetadataManager.cpp
         FileManager.cpp
         FileInterface.cpp
+        FileOperationLogger.cpp
 )
 
 # Specifies libraries CMake should link to your target library. You
