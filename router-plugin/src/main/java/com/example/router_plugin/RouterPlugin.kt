@@ -1,8 +1,11 @@
 package com.example.router_plugin
 
 import com.android.build.api.artifact.ScopedArtifact
+import com.android.build.api.instrumentation.FramesComputationMode
+import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
+import com.example.router_plugin.bitmap.BitmapClassVisitorFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -20,8 +23,10 @@ class RouterPlugin : Plugin<Project> {
 
             println("[Debug] 开始执行任务 name:= ${capitalizedVariantName}")
 
-            val taskProvider = target.tasks.register("ProviderCollector${capitalizedVariantName}Task",
-                ProviderCollectorTask::class.java)
+            val taskProvider = target.tasks.register(
+                "ProviderCollector${capitalizedVariantName}Task",
+                ProviderCollectorTask::class.java
+            )
             variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                 .use(taskProvider)
                 .toTransform(
@@ -30,6 +35,19 @@ class RouterPlugin : Plugin<Project> {
                     ProviderCollectorTask::allDirectories,
                     ProviderCollectorTask::output
                 )
+        }
+
+
+        androidComponents.onVariants { variant ->
+            variant.instrumentation.transformClassesWith(
+                BitmapClassVisitorFactory::class.java,
+                InstrumentationScope.PROJECT
+            ) {
+            }
+
+            variant.instrumentation.setAsmFramesComputationMode(
+                FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_METHODS
+            )
         }
     }
 }
