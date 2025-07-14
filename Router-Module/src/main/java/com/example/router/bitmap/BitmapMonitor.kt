@@ -10,7 +10,6 @@ import java.util.WeakHashMap
 import java.util.concurrent.ScheduledThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.math.max
 
 object BitmapMonitor {
     private const val TAG = "BitmapMonitor"

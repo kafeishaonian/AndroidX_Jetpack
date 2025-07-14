@@ -55,5 +55,5 @@ dependencies {
 //    implementation(project(":JetpackMvvm"))
 //    implementation(project(":Thread-P2P-Module"))
 //    implementation(project(":Router-Module"))
-    implementation(project(":File-Module"))
+//    implementation(project(":File-Module"))
 }
