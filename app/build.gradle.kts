@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-//    id("com.example.router-plugin")
+    id("com.example.router-plugin")
 }
 
 afterEvaluate {
@@ -52,8 +52,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-//    implementation(project(":JetpackMvvm"))
-//    implementation(project(":Thread-P2P-Module"))
-//    implementation(project(":Router-Module"))
-//    implementation(project(":File-Module"))
+    implementation(project(":JetpackMvvm"))
+    implementation(project(":Thread-P2P-Module"))
+    implementation(project(":Router-Module"))
+    implementation(project(":File-Module"))
+    implementation(project(":module-fundamental"))
 }

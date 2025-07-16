@@ -1,4 +1,4 @@
-package com.example.router_plugin.bitmap
+package com.example.router_plugin.track
 
 import com.android.build.api.instrumentation.AsmClassVisitorFactory
 import com.android.build.api.instrumentation.ClassContext
@@ -9,7 +9,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.objectweb.asm.ClassVisitor
 
-abstract class BitmapClassVisitorFactory : AsmClassVisitorFactory<BitmapClassVisitorFactory.Params> {
+abstract class EventClassVisitorConfig : AsmClassVisitorFactory<EventClassVisitorConfig.Params> {
 
     interface Params : InstrumentationParameters {
 
@@ -18,15 +18,16 @@ abstract class BitmapClassVisitorFactory : AsmClassVisitorFactory<BitmapClassVis
         val extension: Property<String>
     }
 
-
     override fun createClassVisitor(
         classContext: ClassContext,
         nextClassVisitor: ClassVisitor
     ): ClassVisitor {
-        return BitmapClassVisitor(nextClassVisitor)
+        return EventClassVisitor(nextClassVisitor, classContext)
     }
 
+
     override fun isInstrumentable(classData: ClassData): Boolean {
-        return true
+        return classData.classAnnotations.any { it == "Lcom/example/router/log/annotations/EventModule;" }
     }
+
 }

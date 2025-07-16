@@ -36,7 +36,6 @@ class TaskManager private constructor() : PageTracker.PageConditionObserver {
     private val pendingQueue = PriorityQueue<Task>()
     private val mainHandler = Handler(Looper.getMainLooper())
     @Volatile var currentTask: Task? = null
-        private set
     private var isCurrentTaskActive = false
     private var taskCompletionTime: Long = 0
 
@@ -264,7 +263,7 @@ class TaskManager private constructor() : PageTracker.PageConditionObserver {
         }
     }
 
-    fun getCurrentTask(): Task {
+    fun getTask(): Task {
         return currentTask!!
     }
 
