@@ -12,6 +12,7 @@ abstract class ProviderClassCollector(
 
     private var className: String? = null
     private var hasRouterProvider = false
+    private var hasEventModule = false
     private var interfaces = emptyArray<String>()
     private var isConcreteClass = false
 
@@ -36,6 +37,9 @@ abstract class ProviderClassCollector(
         if (descriptor == "Lcom/example/router/RouterProvider;") {
             hasRouterProvider = true
         }
+        if (descriptor == "Lcom/example/router/log/annotations/EventModule;") {
+            hasEventModule = true
+        }
         return super.visitAnnotation(descriptor, visible)
     }
 
@@ -44,8 +48,13 @@ abstract class ProviderClassCollector(
         if (hasRouterProvider && isConcreteClass && interfaces.isNotEmpty()) {
             methodExit(className, interfaces)
         }
+        if (hasEventModule && className?.isNotEmpty() == true) {
+            methodEdit(className, "${className}Impl.class")
+        }
         super.visitEnd()
     }
 
     abstract fun methodExit(className: String?, interfaces: Array<String>)
+
+    abstract fun methodEdit(className: String?, targetName: String)
 }

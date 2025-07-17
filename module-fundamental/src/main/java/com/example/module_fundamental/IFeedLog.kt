@@ -6,7 +6,7 @@ import com.example.router.log.annotations.Param
 import com.example.router.log.annotations.ParamMap
 import com.example.router.log.annotations.ShowEvent
 
-@EventModule(moduleName = "FeedLog")
+@EventModule
 interface IFeedLog {
 
     @ShowEvent(eventId = "10023", page = "page.home", action = "show.animation")

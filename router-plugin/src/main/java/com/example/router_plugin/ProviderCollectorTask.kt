@@ -1,5 +1,8 @@
 package com.example.router_plugin
 
+import com.example.router_plugin.track.EventClassVisitor
+import com.example.router_plugin.track.EventJarInfo
+import groovy.util.logging.Log
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
@@ -52,6 +55,7 @@ internal abstract class ProviderCollectorTask : DefaultTask() {
     @TaskAction
     fun taskAction() {
         val addOperateList = CopyOnWriteArrayList<ProviderInfo>()
+        val addEventList = CopyOnWriteArrayList<EventJarInfo>()
 
         var targetOperate: File? = null
 
@@ -80,14 +84,14 @@ internal abstract class ProviderCollectorTask : DefaultTask() {
                     jarOutput.closeEntry()
 
                     if (file.name.endsWith(".class")) {
-                        val className = file.name.removeSuffix(".class")
-                        if (!className.isModuleClass()) {
-                            return@forEach
-                        }
+//                        val className = file.name.removeSuffix(".class")
+//                        if (!className.isModuleClass()) {
+//                            return@forEach
+//                        }
                         file.inputStream().use {
                             val classReader = ClassReader(it)
                             classReader.accept(
-                                acceptProviderClassCollector(addOperateList),
+                                acceptProviderClassCollector(addOperateList, addEventList, file),
                                 ClassReader.SKIP_DEBUG
                             )
                         }
@@ -113,14 +117,14 @@ internal abstract class ProviderCollectorTask : DefaultTask() {
                     }
 
                     if (!have && jarEntry.name.endsWith(".class")) {
-                        val className = jarEntry.name.removeSuffix(".class")
-                        if (!className.isModuleClass()) {
-                            return@forEach
-                        }
+//                        val className = jarEntry.name.removeSuffix(".class")
+//                        if (!className.isModuleClass()) {
+//                            return@forEach
+//                        }
                         jarFile.getInputStream(jarEntry).use {
                             val classReader = ClassReader(it)
                             classReader.accept(
-                                acceptProviderClassCollector(addOperateList),
+                                acceptProviderClassCollector(addOperateList, addEventList, file.asFile),
                                 ClassReader.SKIP_DEBUG
                             )
                         }
@@ -145,12 +149,41 @@ internal abstract class ProviderCollectorTask : DefaultTask() {
             jarOutput.write(writer.toByteArray())
             jarOutput.closeEntry()
         }
+        if (addEventList.isNotEmpty()) {
+            addEventList.forEach { eventModule->
+                val eventJarFile = JarFile(eventModule.jarFile)
+                val className = eventModule.className
+                val classEntryPath = "${className.replace('.', '/')}.class"
+
+                val implBytes = with(eventJarFile.getInputStream(eventJarFile.getJarEntry(classEntryPath))) {
+                    use { stream->
+                        val classReader = ClassReader(stream.readBytes())
+                        val writer = ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES)
+                        val eventVisitor = EventClassVisitor(writer)
+
+                        classReader.accept(eventVisitor, ClassReader.SKIP_DEBUG)
+
+                        eventVisitor.getCurrentImplClassBytes()
+                    }
+                }
+
+                implBytes?.let {
+                    val implClassName = "${eventModule.className}Impl"
+                    val implClassPath = "${implClassName.replace('.', '/')}.class"
+
+                    jarOutput.putNextEntry(JarEntry(implClassPath))
+                    jarOutput.write(it)
+                    jarOutput.closeEntry()
+                }
+            }
+        }
+
         jarFile.close()
         jarOutput.close()
     }
 
 
-    private fun acceptProviderClassCollector(addOperateList: CopyOnWriteArrayList<ProviderInfo>): ClassVisitor {
+    private fun acceptProviderClassCollector(addOperateList: CopyOnWriteArrayList<ProviderInfo>, addEventList: CopyOnWriteArrayList<EventJarInfo>, file: File): ClassVisitor {
         val writer = ClassWriter(ClassWriter.COMPUTE_FRAMES)
         return object : ProviderClassCollector(writer) {
             override fun methodExit(
@@ -160,6 +193,12 @@ internal abstract class ProviderCollectorTask : DefaultTask() {
                 className?.let { implName ->
                     val interfaceName = interfaces.first()
                     addOperateList.add(ProviderInfo(interfaceName, implName, 0))
+                }
+            }
+
+            override fun methodEdit(className: String?, targetName: String) {
+                className?.let {
+                    addEventList.add(EventJarInfo(className, targetName, file))
                 }
             }
         }

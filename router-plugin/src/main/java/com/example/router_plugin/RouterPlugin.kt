@@ -6,7 +6,6 @@ import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import com.example.router_plugin.bitmap.BitmapClassVisitorFactory
-import com.example.router_plugin.track.EventClassVisitorConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -52,13 +51,16 @@ class RouterPlugin : Plugin<Project> {
             )
         }
 
-        androidComponents.onVariants { variant ->
-            variant.instrumentation.transformClassesWith(
-                EventClassVisitorConfig::class.java,
-                InstrumentationScope.ALL
-            ) {
-            }
-            variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
-        }
+//        androidComponents.onVariants { variant ->
+//            variant.instrumentation.transformClassesWith(
+//                EventClassVisitorConfig::class.java,
+//                InstrumentationScope.ALL
+//            ) { params ->
+//                params.extension.set(variant.buildType)
+//            }
+//            variant.instrumentation.setAsmFramesComputationMode(
+//                FramesComputationMode.COMPUTE_FRAMES_FOR_INSTRUMENTED_CLASSES
+//            )
+//        }
     }
 }

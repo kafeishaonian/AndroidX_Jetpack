@@ -1,6 +1,5 @@
 package com.example.router_plugin.track
 
-import com.android.build.api.instrumentation.ClassContext
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
@@ -8,16 +7,14 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
 import org.objectweb.asm.tree.AnnotationNode
-import java.io.FileOutputStream
-import java.nio.file.Paths
 
 
 class EventClassVisitor(
     nextVisitor: ClassVisitor,
-    private val classContext: ClassContext
 ) : ClassVisitor(Opcodes.ASM9, nextVisitor) {
 
-    private var moduleName: String? = null
+    private var implClassBytes: ByteArray? = null
+
     private var className: String? = null
     private var isInterface = false
     private val methods = mutableListOf<MethodData>()
@@ -35,17 +32,6 @@ class EventClassVisitor(
         isInterface = access and Opcodes.ACC_INTERFACE != 0
     }
 
-
-    override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor? {
-        if (descriptor == "Lcom/example/router/log/annotations/EventModule;") {
-            return object : AnnotationVisitor(Opcodes.ASM9) {
-                override fun visit(name: String?, value: Any?) {
-                    if ("value" == name) moduleName = value.toString()
-                }
-            }
-        }
-        return super.visitAnnotation(descriptor, visible)
-    }
 
     override fun visitMethod(
         access: Int,
@@ -105,35 +91,19 @@ class EventClassVisitor(
     }
 
     override fun visitEnd() {
-        if (isInterface && moduleName != null && className != null && methods.isNotEmpty()) {
-            val implName = "${className}Impl"
-            val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
-            generateImplClass(implName, cw)
-
-            super.visitEnd()
-
-            val byteCode = cw.toByteArray()
-            saveClassToFile(byteCode, implName)
-
-        } else {
-            super.visitEnd()
+        if (isInterface && className != null && methods.isNotEmpty()) {
+            generateImplClass()
         }
+
+        super.visitEnd()
     }
 
 
-    private fun saveClassToFile(bytecode: ByteArray, implName: String) {
-        val outputPath: String = Paths.get("$implName.class").toString()
-        try {
-            FileOutputStream(outputPath).use { fos ->
-                fos.write(bytecode)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 
+    private fun generateImplClass() {
+        val implName = "${className}Impl"
+        val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
 
-    private fun generateImplClass(implName: String, cw: ClassWriter) {
         cw.visit(
             Opcodes.V17,
             Opcodes.ACC_PUBLIC,
@@ -156,7 +126,6 @@ class EventClassVisitor(
                     cw,
                     methodData,
                     methodData.clickEvent!!,
-                    moduleName!!,
                     "click"
                 )
 
@@ -164,13 +133,18 @@ class EventClassVisitor(
                     cw,
                     methodData,
                     methodData.showEvent!!,
-                    moduleName!!,
                     "show"
                 )
             }
         }
         cw.visitEnd()
+
+        implClassBytes = cw.toByteArray()
     }
+
+    fun hasImplClass(): Boolean = implClassBytes != null
+
+    fun getCurrentImplClassBytes(): ByteArray? = implClassBytes
 
     private fun generateConstructor(cw: ClassWriter, className: String) {
         val mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null)
@@ -193,7 +167,6 @@ class EventClassVisitor(
         cw: ClassWriter,
         methodData: MethodData,
         eventAnnotation: AnnotationNode,
-        moduleName: String,
         type: String
     ) {
         // 解析注解值（正确的处理方式）
@@ -260,7 +233,6 @@ class EventClassVisitor(
         // 创建 EventData 对象
         mv.visitTypeInsn(Opcodes.NEW, "com/example/router/log/EventData")
         mv.visitInsn(Opcodes.DUP)
-        mv.visitLdcInsn(moduleName)
         mv.visitLdcInsn(type)
         mv.visitLdcInsn(eventId)
         mv.visitLdcInsn(page)

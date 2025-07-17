@@ -14,6 +14,7 @@ object EventCache {
     // 定时上报间隔（秒）
     private const val INTERVAL_SECONDS = 5L
 
+    @JvmStatic
     fun addEvent(event: EventData) {
         queue.offer(event)
 
