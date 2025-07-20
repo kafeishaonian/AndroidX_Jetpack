@@ -1,5 +1,6 @@
 package com.example.router.log
 
+import android.util.Log
 import java.util.concurrent.ConcurrentLinkedQueue
 
 /**
@@ -10,7 +11,7 @@ object EventCache {
     private val queue = ConcurrentLinkedQueue<EventData>()
 
     //批次上报阈值
-    private const val BATCH_SIZE = 10
+    private const val BATCH_SIZE = 2
     // 定时上报间隔（秒）
     private const val INTERVAL_SECONDS = 5L
 
@@ -34,6 +35,7 @@ object EventCache {
         }
         if (batch.isNotEmpty()) {
             //TODO 上报接口
+            Log.e("EventCache","--------> batch：= $batch" )
         }
     }
 }

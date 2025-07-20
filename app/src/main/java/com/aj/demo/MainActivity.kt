@@ -1,6 +1,7 @@
 package com.aj.demo
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -26,10 +27,11 @@ class MainActivity : AppCompatActivity() {
 
         val text = findViewById<TextView>(R.id.main_text)
         text.setOnClickListener {
-
             ELog.log(IFeedLog::class.java).clickProfile(map = mapOf(
                 "id" to "123",
                 "name" to "456"))
+
+            startActivity(Intent(this, OOMActivity::class.java))
         }
     }
 }

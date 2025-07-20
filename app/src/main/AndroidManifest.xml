@@ -29,6 +29,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".OOMActivity"/>
+
         <activity android:name="com.aj.mvvm.demo.compiler.CompilerActivity"/>
 
         <activity android:name="com.example.router.activity.RouterDemoActivity"/>
