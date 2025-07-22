@@ -43,4 +43,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(project(":Router-Module"))
     api(libs.leak.canary)
+    implementation(libs.rxJava)
+    implementation(libs.rxAndroid)
 }
