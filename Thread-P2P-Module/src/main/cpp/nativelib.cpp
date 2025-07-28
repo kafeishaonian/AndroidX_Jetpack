@@ -10,7 +10,7 @@
 
 using namespace std;
 
-static bool initP2P(JNIEnv* env, jobject instance, jint tcp_port, jint udp_port) {
+static jboolean initP2P(JNIEnv* env, jobject instance, jint tcp_port, jint udp_port) {
     return p2p::P2PManager::getInstance().initialize(env, instance, tcp_port, udp_port) ? JNI_TRUE : JNI_FALSE;
 }
 
