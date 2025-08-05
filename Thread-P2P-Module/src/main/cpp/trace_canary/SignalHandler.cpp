@@ -10,6 +10,72 @@
 
 namespace anr_trace{
 
+    bool SignalHandler::sHandlerInstalled = false;
+    vector<SignalHandler*>* SignalHandler::sHandlerStack = nullptr;
+    bool SignalHandler::sStackInstalled = false;
+    bool SignalHandler::sNativeBacktraceHandlerInstalled = false;
+
+    SignalHandler::SignalHandler() {
+        lock_guard<mutex> lock(sHandlerStackMutex);
+
+        if (!sHandlerStack) {
+            sHandlerStack = new vector<SignalHandler*>;
+        }
+        installAlternateStackLocked();
+        installHandlersLocked();
+        installNativeBacktraceHandlersLocked();
+        sHandlerStack->push_back(this);
+    }
+
+    SignalHandler::~SignalHandler() {
+
+    }
+
+    void SignalHandler::installAlternateStackLocked() {
+        if (sStackInstalled) {
+            return;
+        }
+
+        memset(&sOldStack, 0, sizeof(sOldStack));
+        memset(&sNewStack, 0, sizeof(sNewStack));
+        static constexpr unsigned kSigStackSize = max(16384, SIGSTKSZ);
+
+        if (sigaltstack(nullptr, &sOldStack) == -1 || !sOldStack.ss_sp || sOldStack.ss_size < kSigStackSize) {
+            sNewStack.ss_sp = calloc(1, kSigStackSize);
+            sNewStack.ss_size = kSigStackSize;
+            if (sigaltstack(&sNewStack, nullptr) == -1) {
+                free(sNewStack.ss_sp);
+            }
+        }
+        sStackInstalled = true;
+    }
+
+    void SignalHandler::handleSignal(int sig, const siginfo_t *info, void *uc) {
+
+    }
+
+    void SignalHandler::handleDebuggerSignal(int sig, const siginfo_t *info, void *uc) {
+
+    }
+
+    void SignalHandler::restoreHandlersLocked() {
+
+    }
+
+    void SignalHandler::restoreNativeBacktraceHandlersLocked() {
+
+    }
+
+    void SignalHandler::debuggerSignalHandler(int sig, siginfo_t *info, void *uc) {
+        unique_lock<mutex> lock(sNativeBacktraceHandlerStackMutex);
+
+        for (auto it = sHandlerStack->rbegin(); it != sHandlerStack->rend(); ++it) {
+            (*it)->handleDebuggerSignal(sig, info, uc);
+        }
+
+        lock.unlock();
+    }
+
     bool SignalHandler::installHandlersLocked() {
         if (sHandlerInstalled) {
             return false;
@@ -31,7 +97,24 @@ namespace anr_trace{
     }
 
     bool SignalHandler::installNativeBacktraceHandlersLocked() {
+        if (sNativeBacktraceHandlerInstalled) {
+            return false;
+        }
 
+        if (sigaction(BIONIC_SIGNAL_DEBUGGER, nullptr, &sNativeBacktraceOldHandlers) == -1) {
+            return false;
+        }
+
+        struct sigaction sa{};
+        sa.sa_sigaction = debuggerSignalHandler;
+        sa.sa_flags = SA_ONSTACK | SA_SIGINFO | SA_RESTART;
+
+        if (sigaction(BIONIC_SIGNAL_DEBUGGER, &sa, nullptr) == -1) {
+            return false;
+        }
+
+        sNativeBacktraceHandlerInstalled = false;
+        return true;
     }
 
     void SignalHandler::installDefaultHandler(int sig) {
@@ -49,8 +132,8 @@ namespace anr_trace{
     void SignalHandler::signalHeader(int sig, siginfo_t *info, void *uc) {
         unique_lock<mutex> lock(sHandlerStackMutex);
 
-        for(auto it = sHandlerStack->rbegin(); it != sHandlerStack->rend(); ++it) {
-            (*it)->handlerDebuggerSignal(sig, info, uc);
+        for (auto it = sHandlerStack->rbegin(); it != sHandlerStack->rend(); ++it) {
+            (*it)->handleDebuggerSignal(sig, info, uc);
         }
         lock.unlock();
     }

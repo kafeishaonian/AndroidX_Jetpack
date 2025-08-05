@@ -43,15 +43,22 @@ namespace anr_trace {
     private:
         static void signalHeader(int sig, siginfo_t *info, void *uc);
         static void debuggerSignalHandler(int sig, siginfo_t *info, void *uc);
-
+        static void installAlternateStackLocked();
 
         SignalHandler(const SignalHandler &) = delete;
         SignalHandler &operator=(const SignalHandler &) = delete;
 
-        static bool sHandlerInstalled = false;
+
+        static bool sHandlerInstalled;
         static struct sigaction sOldHandlers;
         static mutex sHandlerStackMutex;
-        static vector<SingleHandler*> sHandlerStack = nullptr;
+        static vector<SignalHandler*>* sHandlerStack;
+        static bool sStackInstalled;
+        static stack_t sOldStack;
+        static stack_t sNewStack;
+        static bool sNativeBacktraceHandlerInstalled;
+        static struct sigaction sNativeBacktraceOldHandlers;
+        static mutex sNativeBacktraceHandlerStackMutex;
     };
 }
 
