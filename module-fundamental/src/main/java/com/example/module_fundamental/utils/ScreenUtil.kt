@@ -1,5 +1,8 @@
 package com.example.module_fundamental.utils
 
+import android.content.Context
+import androidx.annotation.NonNull
+
 object ScreenUtil {
 
     fun dp2px(@NonNull context: Context, dp: Float): Int {
