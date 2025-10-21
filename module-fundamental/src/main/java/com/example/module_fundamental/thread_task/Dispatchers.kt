@@ -1,6 +1,5 @@
 package com.example.module_fundamental.thread_task
 
-import com.alaeatposapp.t2.task.Executors
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainCoroutineDispatcher

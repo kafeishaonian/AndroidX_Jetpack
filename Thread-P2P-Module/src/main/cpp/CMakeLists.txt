@@ -35,9 +35,9 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         p2p/message_protocol.cpp
         p2p/p2p_manager.cpp
         utils/log_utils.h
-        anr_trace.cpp
-        trace_canary/AnrDumper.cpp
-        trace_canary/SignalHandler.cpp
+#        anr_trace.cpp
+#        trace_canary/AnrDumper.cpp
+#        trace_canary/SignalHandler.cpp
         )
 
 # Specifies libraries CMake should link to your target library. You

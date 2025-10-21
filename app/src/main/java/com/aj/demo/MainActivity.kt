@@ -3,12 +3,17 @@ package com.aj.demo
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.module_fundamental.IFeedLog
+import com.example.module_fundamental.recyclerview.BaseItemView
+import com.example.module_fundamental.recyclerview.UniversalAdapter
 import com.example.router.log.ELog
 
 class MainActivity : AppCompatActivity() {
@@ -33,5 +38,21 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(Intent(this, OOMActivity::class.java))
         }
+
+
+
+        val recycler = findViewById<RecyclerView>(R.id.recycler)
+        val adapter = UniversalAdapter()
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.adapter = adapter
+        adapter.addEventListener(TextItemView::class.java, R.id.text) { view, any, i ->
+            Log.e("LogLogLog", "---------> any:= $any    i:= $i")
+        }
+
+        val list = mutableListOf<BaseItemView<*>>()
+        (0..20).forEach {
+            list.add(TextItemView("你好啊啊 $it"))
+        }
+        adapter.addItems(list)
     }
 }
