@@ -2,22 +2,32 @@ package com.aj.demo
 
 import android.view.View
 import android.widget.TextView
-import com.example.module_fundamental.recyclerview.BaseItemView
+import com.example.module_fundamental.cement2.CementModel
+import com.example.module_fundamental.cement2.CementViewHolder
+import com.example.module_fundamental.cement2.IViewHolderCreator
 
-class TextItemView(val name: String): BaseItemView<String>(name) {
+class TextItemView(val textStr: String) : CementModel<TextItemView.ViewHolder>() {
 
-    private var test: TextView? = null
 
-    override fun layoutResId(): Int {
-        return R.layout.item_view_text
+    override val layoutRes: Int = R.layout.item_view_text
+
+    override val viewHolderCreator: IViewHolderCreator<ViewHolder> = object: IViewHolderCreator<ViewHolder>{
+        override fun create(view: View): ViewHolder {
+            return ViewHolder(view)
+        }
     }
 
-    override fun onViewCreated(root: View) {
-        test = root.findViewById(R.id.text)
+    override fun bindData(holder: ViewHolder) {
+        super.bindData(holder)
+        holder.onBind(textStr)
     }
 
-    override fun bindData() {
-        super.bindData()
-        test?.text = name
+
+    inner class ViewHolder(itemView: View) : CementViewHolder(itemView) {
+        val textView = itemView.findViewById<TextView>(R.id.text)
+
+        fun onBind(str: String){
+            textView.text = str
+        }
     }
 }

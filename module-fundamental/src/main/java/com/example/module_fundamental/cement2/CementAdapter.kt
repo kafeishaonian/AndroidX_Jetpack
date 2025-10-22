@@ -130,7 +130,7 @@ open class CementAdapter : BaseCementAdapter() {
     /**
      * 获取某个Model之后的所有Model（子列表）
      */
-    private fun getAllModelSubListAfter(model: CementModel<*>?): List<CementModel<*>> {
+    private fun getAllModelSubListAfter(model: CementModel<*>?): MutableList<CementModel<*>> {
         val index = models.indexOf(model)
         if (index == -1) {
             return ArrayList()

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,8 +13,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.module_fundamental.IFeedLog
-import com.example.module_fundamental.recyclerview.BaseItemView
-import com.example.module_fundamental.recyclerview.UniversalAdapter
+import com.example.module_fundamental.cement2.CementAdapter
+import com.example.module_fundamental.cement2.CementModel
+import com.example.module_fundamental.cement2.eventhook.OnClickEventHook
 import com.example.router.log.ELog
 
 class MainActivity : AppCompatActivity() {
@@ -42,17 +44,29 @@ class MainActivity : AppCompatActivity() {
 
 
         val recycler = findViewById<RecyclerView>(R.id.recycler)
-        val adapter = UniversalAdapter()
+        val adapter = CementAdapter()
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adapter
-        adapter.addEventListener(TextItemView::class.java, R.id.text) { view, any, i ->
-            Log.e("LogLogLog", "---------> any:= $any    i:= $i")
-        }
+        adapter.addEventHook(object: OnClickEventHook<TextItemView.ViewHolder>(TextItemView.ViewHolder::class.java){
+            override fun onClick(
+                view: View,
+                viewHolder: TextItemView.ViewHolder,
+                position: Int,
+                rawModel: CementModel<*>
+            ) {
+                Log.e("LogLogLog", "--------> position:= $position")
+            }
 
-        val list = mutableListOf<BaseItemView<*>>()
+            override fun onBind(viewHolder: TextItemView.ViewHolder): View? {
+                return viewHolder.textView
+            }
+
+        })
+
+        val list = mutableListOf<CementModel<*>>()
         (0..20).forEach {
             list.add(TextItemView("你好啊啊 $it"))
         }
-        adapter.addItems(list)
+        adapter.addModels(list)
     }
 }
